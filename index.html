@@ -1008,11 +1008,11 @@
         </div>
         <div class="form-group">
           <label>Nama Pengawas Bina</label>
-          <input type="text" id="inp-pengawas-nama" value="RINDA SUHENDRA, S.Pd.I" oninput="updateDisplay()">
+          <input type="text" id="inp-pengawas-nama" value="Rohiman Supriyadi" oninput="updateDisplay()">
         </div>
         <div class="form-group">
           <label>NIP Pengawas Bina</label>
-          <input type="text" id="inp-pengawas-nip" value="19660304 199310 1 001" oninput="updateDisplay()">
+          <input type="text" id="inp-pengawas-nip" value="1xxxxxxxxxxx" oninput="updateDisplay()">
         </div>
       </div>
     </div>
@@ -1101,11 +1101,11 @@
         </div>
         <div class="form-group">
           <label>Supervisor (Nama)</label>
-          <input type="text" id="inp-supervisor" value="ROHIMAN KHAN" oninput="updateDisplay()">
+          <input type="text" id="inp-supervisor" value="Rohiman Khan" oninput="updateDisplay()">
         </div>
         <div class="form-group">
           <label>NIP Supervisor</label>
-          <input type="text" id="inp-supervisor-nip" value="19XXXXXXXXXXXXX oninput="updateDisplay()">
+          <input type="text" id="inp-supervisor-nip" value="19xxxxxxxxxx" oninput="updateDisplay()">
         </div>
         <div class="form-group">
           <label>Jabatan Supervisor</label>
@@ -1168,7 +1168,7 @@
       <div class="identitas-row"><div class="label">Mata Pelajaran</div><div class="sep">:</div><div class="value" id="disp-mapel">MATEMATIKA</div></div>
       <div class="identitas-row"><div class="label">Kelas / Fase</div><div class="sep">:</div><div class="value" id="disp-kelas">V / C</div></div>
       <div class="identitas-row"><div class="label">Hari / Tanggal</div><div class="sep">:</div><div class="value" id="disp-tanggal">Senin, 10 November 2025</div></div>
-      <div class="identitas-row"><div class="label">Supervisor</div><div class="sep">:</div><div class="value" id="disp-supervisor">TATI LESTARI, S.Pd</div></div>
+      <div class="identitas-row"><div class="label">Supervisor</div><div class="sep">:</div><div class="value" id="disp-supervisor">Rohiman Khan</div></div>
     </div>
   </div>
 
@@ -1437,9 +1437,9 @@ Workshop tentang media pembelajaran</textarea>
         <!-- Baris 2: Spasi TTD -->
         <div class="ttd-signature-space"></div>
         <!-- Baris 3: Nama -->
-        <div class="ttd-nama" id="disp-ttd-supervisor">TATI LESTARI, S.Pd</div>
+        <div class="ttd-nama" id="disp-ttd-supervisor">Rohiman Khan</div>
         <!-- Baris 4: NIP -->
-        <div class="ttd-nip">NIP : <span id="disp-ttd-supervisor-nip">197712092008012004</span></div>
+        <div class="ttd-nip">NIP : <span id="disp-ttd-supervisor-nip">19xxxxxxxxx</span></div>
       </div>
 
     </div><!-- /ttd-row -->
@@ -1449,8 +1449,8 @@ Workshop tentang media pembelajaran</textarea>
       <div class="ttd-mengetahui-label">Mengetahui</div>
       <div class="ttd-jabatan-text">Pengawas Bina Kec. <span id="disp-kecamatan">Babelan</span></div>
       <div class="ttd-signature-space"></div>
-      <div class="ttd-nama" id="disp-pengawas-nama">ROHIMAN SUPRIYADI, S.Pd.I</div>
-      <div class="ttd-nip">NIP : <span id="disp-pengawas-nip">19XXXXXXXXXXX</span></div>
+      <div class="ttd-nama" id="disp-pengawas-nama">Rohiman Supriyadi</div>
+      <div class="ttd-nip">NIP : <span id="disp-pengawas-nip">19xxxxxxx</span></div>
     </div>
 
     <div class="keterangan">
@@ -1806,10 +1806,10 @@ Workshop tentang media pembelajaran</textarea>
   }
 
   function applyDummyIdentitasDefaults() {
-    setIfEmpty('inp-supervisor', 'TATI LESTARI, S.Pd');
-    setIfEmpty('inp-supervisor-nip', '197712092008012004');
-    setIfEmpty('inp-pengawas-nama', 'RINDA SUHENDRA, S.Pd.I');
-    setIfEmpty('inp-pengawas-nip', '19660304 199310 1 001');
+    setIfEmpty('inp-supervisor', 'Rohiman Khan');
+    setIfEmpty('inp-supervisor-nip', '19xxxxxxx');
+    setIfEmpty('inp-pengawas-nama', 'Rohiman Supriyadi');
+    setIfEmpty('inp-pengawas-nip', '1xxxxxxxxxxx');
   }
 
   const LS_KEY = 'supervisi_pembelajaran_state_v1';
@@ -1992,7 +1992,6 @@ Workshop tentang media pembelajaran</textarea>
     const open = acc.dataset.open !== 'false';
     setAccOpen(acc, open);
     btn.addEventListener('click', () => {
-      if (isDesktop()) return;
       setAccOpen(acc, acc.dataset.open !== 'true');
     });
   });
@@ -2014,20 +2013,38 @@ Workshop tentang media pembelajaran</textarea>
     mobileBtn.setAttribute('aria-expanded', 'false');
   }
 
-  function syncSidebarForViewport() {
-    if (isDesktop()) {
+  let lastViewportIsDesktop = isDesktop();
+
+  function applyDesktopAccordionDefaults() {
+    document.querySelectorAll('.sidebar-acc').forEach(acc => setAccOpen(acc, true));
+  }
+
+  function applyMobileAccordionDefaults() {
+    const sekolah = document.querySelector('.sidebar-acc[data-acc="sekolah"]');
+    const identitas = document.querySelector('.sidebar-acc[data-acc="identitas"]');
+    const excel = document.querySelector('.sidebar-acc[data-acc="excel"]');
+    const tanggal = document.querySelector('.sidebar-acc[data-acc="tanggal"]');
+    if (sekolah) setAccOpen(sekolah, true);
+    if (identitas) setAccOpen(identitas, false);
+    if (excel) setAccOpen(excel, false);
+    if (tanggal) setAccOpen(tanggal, false);
+  }
+
+  function syncSidebarForViewport(isInitial = false) {
+    const nowDesktop = isDesktop();
+    if (nowDesktop) {
       closeSidebar();
-      document.querySelectorAll('.sidebar-acc').forEach(acc => setAccOpen(acc, true));
-    } else {
-      const sekolah = document.querySelector('.sidebar-acc[data-acc="sekolah"]');
-      const identitas = document.querySelector('.sidebar-acc[data-acc="identitas"]');
-      const excel = document.querySelector('.sidebar-acc[data-acc="excel"]');
-      const tanggal = document.querySelector('.sidebar-acc[data-acc="tanggal"]');
-      if (sekolah) setAccOpen(sekolah, true);
-      if (identitas) setAccOpen(identitas, false);
-      if (excel) setAccOpen(excel, false);
-      if (tanggal) setAccOpen(tanggal, false);
     }
+
+    if (isInitial) {
+      if (nowDesktop) applyDesktopAccordionDefaults();
+      else applyMobileAccordionDefaults();
+    } else if (nowDesktop !== lastViewportIsDesktop) {
+      if (nowDesktop) applyDesktopAccordionDefaults();
+      else applyMobileAccordionDefaults();
+    }
+
+    lastViewportIsDesktop = nowDesktop;
   }
 
   mobileBtn.addEventListener('click', () => {
@@ -2039,8 +2056,8 @@ Workshop tentang media pembelajaran</textarea>
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeSidebar();
   });
-  window.addEventListener('resize', syncSidebarForViewport);
-  syncSidebarForViewport();
+  window.addEventListener('resize', () => syncSidebarForViewport(false));
+  syncSidebarForViewport(true);
 
   const restored = loadState();
   if (!restored) {
